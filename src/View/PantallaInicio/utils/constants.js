@@ -4,7 +4,7 @@ const {width, height} = Dimensions.get('screen');
 
 export const CARD = {
     WIDTH: width * 0.9,
-    HEIGHT: height * 0.78,
+    HEIGHT: height * 0.64,
     BORDER_RADIUS:20,
     OUT_OF_SCREEN: width + 0.5 * width,
 }
@@ -12,7 +12,7 @@ export const CARD = {
 
 export const COLORS={
     like:'#00eda6',
-    favorite: 'yellow',
+    favorite: '#6960fc',
     nope:'#ff006f',
 }
 
