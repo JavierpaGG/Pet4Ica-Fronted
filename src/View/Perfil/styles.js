@@ -13,9 +13,9 @@ export const styles = StyleSheet.create({
   },
   userInfoContainer: {
     backgroundColor: '#f0f0f0',
-    borderRadius: 15, // Aumenté el radio del borde
-    borderWidth: 2, // Añadí un borde con un ancho de 2
-    borderColor: '#ccc', // Color del borde
+    borderRadius: 15,
+    borderWidth: 2,
+    borderColor: '#ccc',
     padding: 20,
     marginBottom: 20,
     width: '100%',
@@ -34,7 +34,7 @@ export const styles = StyleSheet.create({
   },
   userInfoBackground: {
     backgroundColor: '#c9c7ff',
-    borderRadius: 8, // Redondeé un poco más los bordes
+    borderRadius: 8,
     padding: 10,
   },
   subtitle: {
@@ -66,12 +66,16 @@ export const styles = StyleSheet.create({
     backgroundColor: '#6b61fc',
     paddingVertical: 12,
     paddingHorizontal: 30,
-    borderRadius: 25, // Aumenté el radio del borde
+    borderRadius: 25,
     marginTop: 20,
   },
   buttonText: {
     color: '#fff',
     fontSize: 18,
     textAlign: 'center',
+  },
+  label: {
+    fontWeight: 'bold',
+    marginRight: 5,
   },
 });

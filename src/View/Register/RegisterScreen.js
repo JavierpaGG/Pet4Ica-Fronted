@@ -5,13 +5,14 @@ import { createData } from '../../Api/api';
 import {styles} from './styles'
 const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
+  const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleRegister = async () => {
     try {
-      const data = {username,email,password};
+      const data = {username,nombre,email,password};
 
       const response = await createData('auth/registrar', data);
 
@@ -41,6 +42,12 @@ const RegisterScreen = ({ navigation }) => {
         placeholder="Nombre de usuario"
         value={username}
         onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Nombre"
+        value={nombre}
+        onChangeText={setNombre}
       />
       <TextInput
         style={styles.input}

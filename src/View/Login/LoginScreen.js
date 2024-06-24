@@ -1,26 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Image, StyleSheet, TouchableOpacity, Alert } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, Image, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createData } from '../../Api/api';
-import { guardarTokenDeAcceso, obtenerTokenDeAcceso } from '../../Models/token'; // Cambiado el nombre de la función
-import {styles} from './styles'
+import { guardarTokenDeAcceso } from '../../Models/token'; // Cambiado el nombre de la función
+import { styles } from './styles';
 
 const LoginScreen = ({ navigation }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
   const [logoVisible, setLogoVisible] = useState(true); // Estado para controlar la visibilidad del logo
-
-  useEffect(() => {
-    checkIfLoggedIn();
-  }, []);
-
-  const checkIfLoggedIn = async () => {
-    const token = await obtenerTokenDeAcceso();
-    if (token) {
-      navigation.navigate("Main");
-    }
-  };
 
   const handleLogin = async () => {
     try {

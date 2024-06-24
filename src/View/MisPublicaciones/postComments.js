@@ -18,7 +18,7 @@ const PostComments = ({ route }) => {
 
   const fetchComments = async () => {
     try {
-      const response = await axios.get(`http://192.168.1.9:8080/api/publicaciones/${postId}/comentarios`);
+      const response = await axios.get(`http://192.168.1.10:8080/api/publicaciones/${postId}/comentarios`);
       setComments(response.data);
       setLoading(false);
     } catch (error) {

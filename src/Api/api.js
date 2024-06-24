@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Crear una instancia de Axios con la configuración base
 const api = axios.create({
-  baseURL: 'http://192.168.1.9:8080/api/', // Cambia esto si el puerto o la URL de tu backend cambia
+  baseURL: 'http://192.168.1.10:8080/api/', // Cambia esto si el puerto o la URL de tu backend cambia
   headers: {
     'Content-Type': 'application/json'
   }
@@ -16,7 +16,7 @@ const handleAxiosError = (error) => {
 
 // Función para construir la URL de las imágenes
 export const getImageUrl = (imagePath) => {
-  return `http://192.168.1.9:8080/api/mascotas/images/${imagePath}`;
+  return `http://192.168.1.10:8080/api/mascotas/images/${imagePath}`;
 };
 
 // Método POST (Crear)

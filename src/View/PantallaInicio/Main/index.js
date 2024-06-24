@@ -51,7 +51,7 @@ export default function Main() {
       Alert.alert(
         'Todas las publicaciones mostradas',
         'Por el momento no hay más publicaciones disponibles',
-        [{ text: 'OK', onPress: () => console.log('OK presionado') }]
+    
       );
     }
     setPets((prevState) => prevState.slice(1));
@@ -85,7 +85,6 @@ export default function Main() {
   }
 
   if (error) {
-    console.error('Error:', error);
     return (
       <View style={styles.container}>
         <Text>Error al obtener los datos: {error.message}</Text>

@@ -29,7 +29,7 @@ const PostListScreen = () => {
       }
   
       // Obtener las publicaciones del usuario usando su ID en la URL
-      const response = await axios.get(`http://192.168.1.9:8080/api/usuarios/${userId}/publicaciones`);
+      const response = await axios.get(`http://192.168.1.10:8080/api/usuarios/${userId}/publicaciones`);
       const data = response.data;
   
       if (data && Array.isArray(data)) { // Verificar si data es un array

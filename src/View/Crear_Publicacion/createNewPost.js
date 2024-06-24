@@ -61,7 +61,7 @@ const CreateNewPost = () => {
   
     try {
       const responseMascota = await axios.post(
-        "http://192.168.1.9:8080/api/mascotas",
+        "http://192.168.1.10:8080/api/mascotas",
         formDataMascota,
         {
           headers: {
@@ -77,7 +77,7 @@ const CreateNewPost = () => {
       const userId = decodedToken.id;
   
       const responsePublicacion = await axios.post(
-        "http://192.168.1.9:8080/api/publicaciones",
+        "http://192.168.1.10:8080/api/publicaciones",
         {
           titulo,
           descripcion,
