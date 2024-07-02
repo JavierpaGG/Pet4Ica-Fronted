@@ -25,6 +25,7 @@ const CreateNewPost = () => {
   const [nombre, setNombre] = useState("");
   const [raza, setRaza] = useState("");
   const [edad, setEdad] = useState("");
+  const [especie, setEspecie] = useState("");
   const [imagen, setImagen] = useState(null);
   const [imagenCargada, setImagenCargada] = useState(false);
   const [accessToken, setAccessToken] = useState("");
@@ -50,6 +51,7 @@ const CreateNewPost = () => {
     formDataMascota.append("nombre", nombre);
     formDataMascota.append("raza", raza);
     formDataMascota.append("edad", edad);
+    formDataMascota.append("especie", especie);
   
     if (imagen) {
       formDataMascota.append("foto", {
@@ -61,7 +63,7 @@ const CreateNewPost = () => {
   
     try {
       const responseMascota = await axios.post(
-        "http://192.168.1.10:8080/api/mascotas",
+        "http://192.168.1.8:8080/api/mascotas",
         formDataMascota,
         {
           headers: {
@@ -77,16 +79,18 @@ const CreateNewPost = () => {
       const userId = decodedToken.id;
   
       const responsePublicacion = await axios.post(
-        "http://192.168.1.10:8080/api/publicaciones",
+        "http://192.168.1.8:8080/api/publicaciones",
         {
           titulo,
           descripcion,
           contenido,
           mascota: { id: responseMascota.data.id },
-          usuario: { id: userId } // Agregar el ID del usuario en la solicitud de publicación
+          usuario: { id: userId },
         },
         {
-          headers: { Authorization: `Bearer ${accessToken}` },
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
         }
       );
       
@@ -97,6 +101,7 @@ const CreateNewPost = () => {
         "Publicación Creada",
         "La publicación se ha creado correctamente"
       );
+      
       navigation.navigate("Main"); // Navegar a la pantalla de lista de publicaciones
     } catch (error) {
       console.error("Error al crear la publicación:", error);
@@ -131,6 +136,7 @@ const CreateNewPost = () => {
     setNombre("");
     setRaza("");
     setEdad("");
+    setEspecie("");
     setImagen(null);
     setImagenCargada(false);
   };
@@ -169,6 +175,12 @@ const CreateNewPost = () => {
             placeholder="Raza"
             value={raza}
             onChangeText={setRaza}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Especie"
+            value={especie}
+            onChangeText={setEspecie}
           />
           <TextInput
             style={styles.input}

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, TouchableOpacity } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { createData } from '../../Api/api';
-import {styles} from './styles'
+import { styles } from './styles';
 const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [nombre, setNombre] = useState('');
@@ -12,23 +12,41 @@ const RegisterScreen = ({ navigation }) => {
 
   const handleRegister = async () => {
     try {
-      const data = {username,nombre,email,password};
+      // Validación de campos
+      if (username.length < 4) {
+        throw new Error('Nombre de usuario debe tener al menos 4 caracteres.');
+      }
+      if (nombre.length < 4) {
+        throw new Error('Nombre debe tener al menos 4 caracteres.');
+      }
+      if (!email || !email.includes('@')) {
+        throw new Error('Correo electrónico no válido.');
+      }
+      if (password.length < 8) {
+        throw new Error('Contraseña debe tener al menos 8 caracteres.');
+      }
 
+      const data = { username, nombre, email, password };
       const response = await createData('auth/registrar', data);
 
-       // Verifica la respuesta
-       if (typeof response === 'string') {
+      // Verifica la respuesta
+      if (typeof response === 'string') {
         // Si la respuesta es un string, significa que el registro fue exitoso
         navigation.navigate("Login");
-        Alert.alert('Registro exitoso', 'Usuario registrado correctamente');
+        showAlert('Registro exitoso', 'Usuario registrado correctamente');
       } else {
         // Si la respuesta no es un string, muestra el mensaje de error recibido
         setErrorMessage(response.data.message || 'Error en el registro');
       }
     } catch (error) {
-      console.error(error);
-      setErrorMessage('An error occurred. Please try again.');
+      // Captura y muestra errores específicos
+      showAlert('Error', error.message);
     }
+  };
+
+  const showAlert = (title, message) => {
+    // Mostrar alerta con título y mensaje personalizados
+    Alert.alert(title, message);
   };
 
   return (
@@ -81,7 +99,6 @@ const RegisterScreen = ({ navigation }) => {
       </TouchableOpacity>
     </LinearGradient>
   );
-}
-
+};
 
 export default RegisterScreen;

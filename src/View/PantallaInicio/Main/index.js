@@ -6,8 +6,9 @@ import { styles } from "./styles";
 import { ACTION_OFFSET, CARD } from "../utils/constants";
 import Footer from "../Footer";
 import CommentsModal from "../Modal/comentarios";
+import { obtenerTokenDeAcceso, obtenerYDecodificarToken } from "../../../Models/token";
 
-export default function Main() {
+const Main = () => {
   const { pets, setPets, loading, error } = usePets();
   const swipe = useRef(new Animated.ValueXY()).current;
   const tiltSign = useRef(new Animated.Value(1)).current;
@@ -32,7 +33,7 @@ export default function Main() {
             y: dy,
           },
           useNativeDriver: true,
-        }).start(renoveTopCard);
+        }).start(() => renoveTopCard(direction));
       } else {
         Animated.spring(swipe, {
           toValue: {
@@ -46,23 +47,57 @@ export default function Main() {
     },
   });
 
-  const renoveTopCard = useCallback(() => {
-    if (pets.length === 1) {
-      Alert.alert(
-        'Todas las publicaciones mostradas',
-        'Por el momento no hay más publicaciones disponibles',
-    
-      );
+  const renoveTopCard = useCallback((direction) => {
+    if (pets.length > 0) {
+      const postId = pets[0].id;
+      setCurrentPostId(postId);
+      if (direction > 0) {
+        enviarSolicitudFavorito(postId);
+      }
+      setPets((prevState) => prevState.slice(1));
+      swipe.setValue({ x: 0, y: 0 });
     }
-    setPets((prevState) => prevState.slice(1));
-    setCurrentPostId(null);
-    swipe.setValue({ x: 0, y: 0 });
-  }, [pets.length, setPets, swipe]);
+  }, [pets, setPets, swipe]);
+
+  const enviarSolicitudFavorito = async (postId) => {
+    try {
+ 
+      const token1= await obtenerTokenDeAcceso();
+
+      // Obtener el token JWT
+      const token = await obtenerYDecodificarToken();
+      
+      // Extraer el usuarioId del token decodificado
+      const usuarioId = token?.id;
+      if (!usuarioId) {
+        throw new Error('No se pudo obtener el usuarioId del token');
+      }
+  
+      const url = `http://192.168.1.8:8080/api/favoritos/agregar?usuarioId=${usuarioId}&publicacionId=${postId}`;
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token1}` // Incluir el token JWT como bearer token
+        },
+      };
+  
+      const response = await fetch(url, requestOptions);
+      if (!response.ok) {
+        const errorData = await response.text(); // Obtener detalles del error desde la API si están disponibles
+        throw new Error(`Error al agregar a favoritos: ${errorData}`);
+      }
+      Alert.alert( 'Se agrego correctamente','Añadido a la lista de favoritos');
+    } catch (error) {
+      Alert.alert('Ya tienes esta publicación como favorita');
+    }
+  };
+  
+  
 
   const handleChoice = useCallback((direction) => {
     if (pets.length > 0) {
       const postId = pets[0].id;
-      setCurrentPostId(postId);  // Asegúrate de configurar el postId aquí
+      setCurrentPostId(postId);
       if (direction === 0) {
         setModalVisible(true);
       } else {
@@ -70,11 +105,10 @@ export default function Main() {
           toValue: direction * CARD.OUT_OF_SCREEN,
           duration: 400,
           useNativeDriver: true,
-        }).start(renoveTopCard);
+        }).start(() => renoveTopCard(direction));
       }
     }
   }, [renoveTopCard, pets, swipe.x]);
-  
 
   if (loading) {
     return (
@@ -121,4 +155,6 @@ export default function Main() {
       />
     </View>
   );
-}
+};
+
+export default Main;

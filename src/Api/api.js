@@ -1,22 +1,26 @@
 // api.js (tu archivo de configuración de Axios)
 import axios from 'axios';
+import { Alert } from 'react-native';
 
 // Crear una instancia de Axios con la configuración base
 const api = axios.create({
-  baseURL: 'http://192.168.1.10:8080/api/', // Cambia esto si el puerto o la URL de tu backend cambia
+  baseURL: 'http://192.168.1.8:8080/api/', // Cambia esto si el puerto o la URL de tu backend cambia
   headers: {
     'Content-Type': 'application/json'
   }
 });
 
 const handleAxiosError = (error) => {
-  console.error(`Error en la solicitud ${error.config.method.toUpperCase()}:`, error);
-  throw error; // Lanza el error para que pueda ser manejado por el llamador
+  Alert.alert('Error', 'Las credenciales son incorrectas', [
+    {text: 'OK', onPress: () => console.log(error)},
+  ]);
+  // console.error(`Error en la solicitud ${error.config.method.toUpperCase()}:`, error);
+  // throw error; 
 };
 
 // Función para construir la URL de las imágenes
 export const getImageUrl = (imagePath) => {
-  return `http://192.168.1.10:8080/api/mascotas/images/${imagePath}`;
+  return `http://192.168.1.8:8080/api/mascotas/images/${imagePath}`;
 };
 
 // Método POST (Crear)

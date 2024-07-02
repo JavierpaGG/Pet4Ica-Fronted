@@ -1,49 +1,107 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { obtenerYDecodificarToken } from '../../Models/token';
+import { getImageUrl } from '../../Api/api';
+import { obtenerTokenDeAcceso } from '../../Models/token';
 
-const FavoritePetsScreen = () => {
-  // Datos de ejemplo de mascotas favoritas
-  const favoritePetsData = [
-    {
-      id: '1',
-      name: 'Luna',
-      breed: 'Labrador Retriever',
-      image: require('../../../assets/pet1.jpg'),
-    },
-    {
-      id: '2',
-      name: 'Max',
-      breed: 'Golden Retriever',
-      image: require('../../../assets/pet2.jpg'),
-    },
-    // Agrega más mascotas favoritas aquí si lo deseas
-  ];
+const FavoritosScreen = () => {
+  const [favoritos, setFavoritos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [usuarioId, setUsuarioId] = useState(null); // Estado para almacenar el ID de usuario
+  
 
-  // Renderiza cada elemento de la lista de mascotas favoritas
+  useEffect(() => {
+    const obtenerDatosDeUsuario = async () => {
+      const userData = await obtenerYDecodificarToken();
+      if (userData && userData.id) {
+        const idUsuario = userData.id; // Obtener el ID de usuario desde el token decodificado
+        setUsuarioId(idUsuario); // Almacenar el ID de usuario en el estado
+        cargarFavoritos(idUsuario);
+      } else {
+        console.error('No se pudo obtener el usuario desde el token.');
+      }
+    };
+
+    obtenerDatosDeUsuario();
+  }, []);
+
+  const cargarFavoritos = async (idUsuario) => {
+    try {
+      const response = await fetch(`http://192.168.1.8:8080/api/favoritos/usuario/${idUsuario}`);
+      const data = await response.json();
+      setFavoritos(data);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error al cargar favoritos:', error);
+      setLoading(false);
+    }
+  };
+
+  const handleSolicitudAdopcion = async (publicacionId) => {
+    try {
+      const token1= await obtenerTokenDeAcceso();
+      console.log('Enviando solicitud de adopción para usuarioId:', usuarioId, 'y publicacionId:', publicacionId);
+  
+      const requestOptions = {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token1}`
+        },
+        body: JSON.stringify({
+          usuarioId: usuarioId,
+          publicacionId: publicacionId,
+        }),
+      };
+  
+      const response = await fetch('http://192.168.1.8:8080/api/adopciones/solicitar', requestOptions);
+  
+      if (response.ok) {
+        console.log('Solicitud de adopción enviada correctamente.');
+        // Actualizar el estado o realizar alguna acción adicional si es necesario
+      } else {
+        throw new Error('Error al enviar la solicitud de adopción.');
+      }
+    } catch (error) {
+      console.error('Error al enviar la solicitud de adopción:', error);
+      // Manejar el error según sea necesario
+    }
+  };
+  
+
   const renderFavoritePetItem = ({ item }) => (
     <TouchableOpacity style={styles.petItemContainer}>
-      <Image source={item.image} style={styles.petImage} />
-      <Text style={styles.petName}>{item.name}</Text>
-      <Text style={styles.petBreed}>{item.breed}</Text>
+      <Image
+        source={{ uri: getImageUrl(item.publicacion.mascota.imagenPath) }}
+        style={styles.petImage}
+      />
+      <Text style={styles.petName}>{item.publicacion.titulo}</Text>
+      <Text style={styles.petDescription}>{item.publicacion.descripcion}</Text>
       <View style={styles.buttonContainer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>✕</Text>
+        <TouchableOpacity style={styles.button} onPress={() => handleSolicitudAdopcion(item.publicacion.id)}>
+          <Text style={styles.buttonText}>🐾 Solicitar adopción</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>❤️</Text>
+          <Text style={styles.buttonText}>❌ Eliminar</Text>
         </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Cargando favoritos...</Text>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <FlatList
-        data={favoritePetsData}
+        data={favoritos}
         renderItem={renderFavoritePetItem}
-        keyExtractor={(item) => item.id}
-        numColumns={2} // Muestra los elementos en dos columnas
-        contentContainerStyle={styles.listContainer}
+        keyExtractor={(item) => item.id.toString()}
       />
     </View>
   );
@@ -52,38 +110,32 @@ const FavoritePetsScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    padding: 10,
-    
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-    color: 'green',
-    textAlign: 'center',
-  },
-  listContainer: {
-    flexGrow: 1,
+    paddingHorizontal: 10,
+    paddingTop: 10,
   },
   petItemContainer: {
-    flex: 1,
+    flexDirection: 'column',
     alignItems: 'center',
-    margin: 10,
+    justifyContent: 'center',
+    backgroundColor: '#f0f0f0',
+    padding: 10,
+    margin: 5,
+    borderRadius: 10,
   },
   petImage: {
-    width: 150,
-    height: 150,
-    borderRadius: 75,
+    width: 120,
+    height: 120,
+    borderRadius: 60,
     marginBottom: 10,
   },
   petName: {
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: 'bold',
+    marginBottom: 5,
   },
-  petBreed: {
+  petDescription: {
     fontSize: 14,
-    color: 'gray',
+    marginBottom: 10,
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -92,16 +144,13 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   button: {
-    backgroundColor: '#514386',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
+    backgroundColor: '#DDDDDD',
+    padding: 10,
     borderRadius: 5,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 14,
   },
 });
 
-export default FavoritePetsScreen;
+export default FavoritosScreen;

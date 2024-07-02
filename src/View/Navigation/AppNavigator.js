@@ -15,6 +15,9 @@ import CreateNewPost from '../Crear_Publicacion/createNewPost';
 import { eliminarTokenDeAcceso } from '../../Models/token';
 import PostComments from '../MisPublicaciones/postComments';
 import CreateNewComment from '../MisPublicaciones/createNewComment';
+import MisSolicitudes from '../MisSolicitudes/misSolicitudes';
+import SeeAdoptersScreen from '../MisPublicaciones/seeAdopters';
+
 
 const Drawer = createDrawerNavigator();
 const Stack = createStackNavigator();
@@ -107,6 +110,17 @@ function DrawerNavigator() {
           ...drawerStyles.drawerHeaderOptions, // Aplicar estilos de la barra superior
         }}
       />
+
+      <Drawer.Screen 
+        name="Mis solicitudes" 
+        component={MisSolicitudes} 
+        options={{
+          drawerIcon: ({ focused, color, size }) => ( 
+            <Icon name="description" size={size} color={color} />
+          ),
+          ...drawerStyles.drawerHeaderOptions, // Aplicar estilos de la barra superior
+        }}
+      />
       
     </Drawer.Navigator>
   );
@@ -128,6 +142,7 @@ const AppNavigator = () => {
         <Stack.Screen name="Main" component={DrawerNavigator} options={{ headerShown: false }} />
         <Stack.Screen name="PostComments" component={PostComments} options={{ title: false }}/>
         <Stack.Screen name="CreateNewComment" component={CreateNewComment} options={{ title: false }}/>
+        <Stack.Screen name="SeeAdoptersScreen" component={SeeAdoptersScreen} options={{ title: false }}/>
       </Stack.Navigator>
     </NavigationContainer>
   );

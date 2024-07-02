@@ -4,10 +4,12 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { createData } from '../../Api/api';
 import { guardarTokenDeAcceso } from '../../Models/token'; // Cambiado el nombre de la función
 import { styles } from './styles';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 const LoginScreen = ({ navigation }) => {
   const [usernameOrEmail, setUsernameOrEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [secureTextEntry, setSecureTextEntry] = useState(true);
   const [errorMessage, setErrorMessage] = useState("");
   const [logoVisible, setLogoVisible] = useState(true); // Estado para controlar la visibilidad del logo
 
@@ -37,6 +39,10 @@ const LoginScreen = ({ navigation }) => {
     setLogoVisible(true);
   };
 
+  const toggleSecureTextEntry = () => {
+    setSecureTextEntry(!secureTextEntry);
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -60,16 +66,24 @@ const LoginScreen = ({ navigation }) => {
           onFocus={handleFocusTextInput}
           onBlur={handleBlurTextInput}
         />
-        <TextInput
-          style={styles.TextInput}
-          placeholder="Contraseña"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry={true}
-          onFocus={handleFocusTextInput}
-          onBlur={handleBlurTextInput}
-        />
-        {errorMessage && <Text style={styles.error}>{errorMessage}</Text>}
+        <View style={styles.passwordContainer}>
+          <TextInput
+            style={styles.passwordInput}
+            placeholder="Contraseña"
+            value={password}
+            onChangeText={setPassword}
+            secureTextEntry={secureTextEntry}
+            onFocus={handleFocusTextInput}
+            onBlur={handleBlurTextInput}
+          />
+          <TouchableOpacity onPress={toggleSecureTextEntry} style={styles.iconContainer}>
+            <Icon
+              name={secureTextEntry ? "visibility-off" : "visibility"}
+              size={24}
+              color="grey"
+            />
+          </TouchableOpacity>
+        </View>
         {buttonLogin({ onPress: handleLogin, text: "Iniciar Sesión", navigation })}
         {buttonRegisterInicial({ onPress: () => navigation.navigate("Register"), text: "¿No tienes una cuenta?", navigation })}
       </View>
